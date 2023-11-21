@@ -4,6 +4,8 @@ import RokuControl from '../components/rokuControlDevice.vue'
 
 <template>
   <div>
-    <RokuControl />
+    <RokuControl/>
+    <RokuControl/>
+    <RokuControl/>
   </div>
 </template>
