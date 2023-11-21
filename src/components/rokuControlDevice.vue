@@ -1,5 +1,4 @@
 <template>
-<v-div>
     <v-card
     class="mx-auto my-8"
     max-width="344"
@@ -28,29 +27,62 @@
         </v-row>
     </v-col>
     <v-col cols="2" class="d-flex align-center justify-center">
+        <v-btn
+            class="ma-2"
+            color="primary"
+            :disabled="dialog"
+            :loading="dialog"
+            @click="dialog = true"
+        >
         <v-icon icon="mdi-power"/>
+      </v-btn>
+      <v-dialog
+        v-model="dialog"
+        :scrim="false"
+        persistent
+        width="auto"
+      >
+      <v-card
+        color="primary"
+      >
+        <v-card-text>
+          Reiniciando Streaming
+          <v-progress-linear
+            indeterminate
+            color="white"
+            class="mb-0"
+          ></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+       
+        
     </v-col>
   </v-row>
 
   </v-card>
-</v-div>
-
+  
 </template>
 
 <script >
-import createVuetify from '../plugins/vuetify'
-    export default {
-        data: () => ({
-        labels: { 0: 'SU', 1: 'MO', 2: 'TU', 3: 'WED', 4: 'TH', 5: 'FR', 6: 'SA' },
-        expand: false,
-        time: 0,
-        forecast: [
-            { day: 'Tuesday', icon: 'mdi-white-balance-sunny', temp: '24\xB0/12\xB0' },
-            { day: 'Wednesday', icon: 'mdi-white-balance-sunny', temp: '22\xB0/14\xB0' },
-            { day: 'Thursday', icon: 'mdi-cloud', temp: '25\xB0/15\xB0' },
-        ],
-        }),
-    }
+import createVuetify from '../plugins/vuetify';
+import { ref, watch, onMounted } from 'vue';
+
+export default {
+  setup() {
+    const dialog = ref(false);
+
+    watch(dialog, (val) => {
+      if (!val) return;
+      setTimeout(() => (dialog.value = false), 4000);
+    });
+
+    return {
+      dialog,
+    };
+  },
+};
 </script>
 <style>
 
