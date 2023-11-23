@@ -10,7 +10,7 @@
     </v-col>
     <v-col cols="8" class="container-title-device pl-0">
         <v-row class="ma-0 pa-0">
-            <v-col cols="3" class="title-device">
+            <v-col cols="4" class="title-device">
                 <p class="font-weight-bold text-sm">Roku</p> 
             </v-col>
             <v-col  class="title-device-description">
@@ -19,7 +19,7 @@
         </v-row>
         <v-row class="ma-0 pa-0">
             <v-col cols="2" class="my-col pt-0">
-                <v-icon icon="mdi-circle" color="success"/>
+                <v-icon icon="mdi-circle" :color="iconConnection"/>
             </v-col>
             <v-col class="d-flex align-center justify-start pl-0 pt-0">
                 <v-card-subtitle class="pl-0 icon-sm" > Online </v-card-subtitle>
@@ -63,20 +63,36 @@
 
 <script>
 import createVuetify from '../plugins/vuetify';
-import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
+import { ref, watch, onMounted, computed, onBeforeUnmount } from 'vue';
 import { io } from "socket.io-client";
 
 export default {
   setup() {
     const socket = ref(null);
+    const isConnected = ref(false);
     const dialog = ref(false);
-
 
     onMounted(() => {
       socket.value = io("http://localhost:5005"); // Reemplaza con tu URL del servidor
+
       socket.value.on("connect", () => {
         console.log("Conectado a Socket.IO");
+        isConnected.value = true;
       });
+
+      socket.value.on("disconnect", () => {
+        console.log("Desconectado de Socket.IO");
+        isConnected.value = false;
+      });
+
+      socket.value.on("error", (error) => {
+        console.error("Error en la conexión Socket.IO:", error);
+        isConnected.value = false;
+      });
+    });
+
+    const iconConnection = computed (()=>{
+      return isConnected.value ? 'success' : 'red';
     });
 
     onBeforeUnmount(() => {
@@ -90,13 +106,8 @@ export default {
       setTimeout(() => (dialog.value = false), 4000);
     });
 
-    // const sendMessage = () => {
-    //   if (message.value.trim() !== '') {
-    //     socket.value.emit("chat-message", message.value);
-    //     message.value = '';
-    //   }
-    // };
     return {
+      iconConnection,
       dialog
     };
   }
