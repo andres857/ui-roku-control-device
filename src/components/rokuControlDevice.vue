@@ -1,5 +1,5 @@
 <template>
-    <v-card
+  <v-card
     class="mx-auto my-8"
     max-width="344"
     elevation="07"
@@ -55,50 +55,50 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-
-       
-        
     </v-col>
   </v-row>
 
   </v-card>
-  
 </template>
 
-<script >
+<script>
 import createVuetify from '../plugins/vuetify';
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
+import { io } from "socket.io-client";
 
 export default {
   setup() {
+    const socket = ref(null);
     const dialog = ref(false);
+
+
+    onMounted(() => {
+      socket.value = io("http://localhost:5005"); // Reemplaza con tu URL del servidor
+      socket.value.on("connect", () => {
+        console.log("Conectado a Socket.IO");
+      });
+    });
+
+    onBeforeUnmount(() => {
+      if (socket.value) {
+        socket.value.close();
+      }
+    });
 
     watch(dialog, (val) => {
       if (!val) return;
       setTimeout(() => (dialog.value = false), 4000);
     });
 
+    // const sendMessage = () => {
+    //   if (message.value.trim() !== '') {
+    //     socket.value.emit("chat-message", message.value);
+    //     message.value = '';
+    //   }
+    // };
     return {
-      dialog,
+      dialog
     };
-  },
+  }
 };
 </script>
-<style>
-
-.title-device{
-    padding-left: 0px;
-    padding-right: 0px;
-    padding-top: 15px;
-    padding-bottom: 0px;
-}
-.title-device-description{
-    padding-left: 0px;
-    padding-right: 0px;
-    padding-top: 15px;
-    padding-bottom: 0px;
-}
-.my-col {
-  padding: 10px 5px 10px 5px;;
-}
-</style>
