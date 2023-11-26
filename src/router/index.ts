@@ -13,6 +13,11 @@ const router = createRouter({
       path: '/devices',
       name: 'devices',
       component: () => import('../views/DevicesView.vue')
+    },
+    {
+      path: '/mediaplayers',
+      name: 'mediaplayers',
+      component: () => import('../views/mediaPlayers.vue')
     }
   ]
 })
