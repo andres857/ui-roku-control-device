@@ -16,6 +16,7 @@
         </v-col>
         <v-col cols="3">
             <v-btn size="x-small" @click="dialog = true">reiniciar</v-btn>
+
             <v-dialog
                 v-model="dialog"
                 :scrim="false"
@@ -50,11 +51,15 @@
         </v-col>
     </v-row>
     </v-card>
+    <v-btn size="x-small" @click="doPublishMessage">publish</v-btn>
+
 </template>
 
 <script >
 import createVuetify from '../plugins/vuetify';
 import { ref, watch } from 'vue';
+import { useMqtt } from '../services/brokerService.ts';
+
 
 export default{
     props: {
@@ -64,8 +69,21 @@ export default{
         }
     },
     setup(props){
+        const {  doPublish } = useMqtt();
+
         const dialog = ref(false);
         const device  = props;
+        const client = device.device.username.slice(1);
+
+        const message = ref({
+            topic: `${client}/player/${device.device.clientid}`,
+            payload: `{ "msg": "Hello, mediaplayer with id ${device.device.clientid}." }`,
+            qos: 0,
+        });
+
+        const doPublishMessage = async () =>{
+            await doPublish(message);
+        }
 
         watch(dialog, (val) => {
             if (!val) return;
@@ -74,7 +92,8 @@ export default{
 
         return {
             device,
-            dialog
+            dialog,
+            doPublishMessage
         }
     }
 }

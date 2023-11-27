@@ -24,8 +24,6 @@ import { ref, onMounted,watch } from 'vue';
 import mediaPlayer from '../components/mediaplayer-item.vue';
 import clientService from '../services/clientService.ts';
 import mediaPlayerService from '../services/mediaPlayerService.ts';
-import { useMqtt } from '../services/brokerService.ts';
-
 
 export default{
   components: {
@@ -35,7 +33,6 @@ export default{
     const clients = ref([]);
     const clientSelect = ref(null);
     const mediaplayerdevices = ref([]);
-    const { doSubscribe, doPublish } = useMqtt();
 
     const listClients = async () => {
         try {
@@ -52,13 +49,11 @@ export default{
       }
     };
 
-
     watch( clientSelect, () => {
       listDevices();
     });
 
     onMounted(listClients);
-    onMounted(doPublish)
 
     return{
       clients,

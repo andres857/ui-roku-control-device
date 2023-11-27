@@ -25,46 +25,42 @@ export function useMqtt() {
         console.error("Error de conexión MQTT:", error);
     });
     // Topic & QoS
-const subscription = ref({
-    topic: "topic/mqttx",
-    qos: 0 as mqtt.QoS,
-  });
-  
-  const doSubscribe = () => {
-    const { topic, qos } = subscription.value;
-    client.subscribe(
-      topic,
-      { qos },
-      (error: Error, granted: mqtt.ISubscriptionGrant[]) => {
-        if (error) {
-          console.log("subscribe error:", error);
-          return;
+    const subscription = ref({
+        topic: "topic/mqttx",
+        qos: 0 as mqtt.QoS,
+      });
+    
+    const doSubscribe = () => {
+      const { topic, qos } = subscription.value;
+      client.subscribe(
+        topic,
+        { qos },
+        (error: Error, granted: mqtt.ISubscriptionGrant[]) => {
+          if (error) {
+            console.log("subscribe error:", error);
+            return;
+          }
+          console.log("subscribe successfully:", granted);
         }
-        console.log("subscribe successfully:", granted);
-      }
-    );
-  };
+      );
+    };
+    
+    const doPublish = (message:any) => {
+        const { topic, qos, payload } = message.value;
+        console.log(topic);
+        
+        client.publish(topic, payload, { qos }, (error) => {
+            if (error) {
+            console.log("publish error:", error);
+            return;
+            }
+            console.log(`published message: ${payload}`);
+        });
+    };
 
-const publish = ref({
-    topic: "topic/browser",
-    payload: '{ "msg": "Hello, I am browser." }',
-    qos: 0 as mqtt.QoS,
-  });
-  
-const doPublish = () => {
-    const { topic, qos, payload } = publish.value;
-    client.publish(topic, payload, { qos }, (error) => {
-        if (error) {
-        console.log("publish error:", error);
-        return;
-        }
-        console.log(`published message: ${payload}`);
-    });
-};
-
-client.on("message", (topic: string, message) => {
-    console.log(`received message: ${message} from topic: ${topic}`);
-  });
+    client.on("message", (topic: string, message) => {
+        console.log(`received message: ${message} from topic: ${topic}`);
+      });
 
     return {
       doSubscribe,
