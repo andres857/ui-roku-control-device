@@ -3,7 +3,17 @@ import axios from 'axios';
 
 class MediaPlayer {
     constructor() {
-        this.baseUrl = 'http://localhost:5005'; // URL base para todas las solicitudes
+        this.baseUrl = 'http://192.168.0.102:5005'; // URL base para todas las solicitudes
+    }
+
+    get devices(){
+        const devices = [
+            {
+                id:'',
+                site:'',
+                room:'',
+            }
+        ]
     }
 
     // Método para obtener los dispositivos

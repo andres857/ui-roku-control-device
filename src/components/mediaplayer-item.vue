@@ -15,8 +15,14 @@
             <input placeholder="Ubicacion" />
         </v-col>
         <v-col cols="3">
-            <v-btn size="x-small" @click="dialog = true">reiniciar</v-btn>
-
+            <v-btn 
+                size="x-small"
+                :disabled="dialog"
+                :loading="dialog"
+                @click="doPublishRestartMessage"
+            > 
+                <v-icon icon="mdi-power"/>
+            </v-btn>
             <v-dialog
                 v-model="dialog"
                 :scrim="false"
@@ -51,7 +57,6 @@
         </v-col>
     </v-row>
     </v-card>
-    <v-btn size="x-small" @click="doPublishMessage">publish</v-btn>
 
 </template>
 
@@ -75,25 +80,26 @@ export default{
         const device  = props;
         const client = device.device.username.slice(1);
 
-        const message = ref({
+        const restartMessage = ref({
             topic: `${client}/player/${device.device.clientid}`,
-            payload: `{ "msg": "Hello, mediaplayer with id ${device.device.clientid}." }`,
+            payload: `{"mediaplayer": {"request": "restart"}}`,
             qos: 0,
         });
 
-        const doPublishMessage = async () =>{
-            await doPublish(message);
+        const doPublishRestartMessage = async () =>{
+            dialog.value = true;
+            await doPublish(restartMessage);
         }
 
         watch(dialog, (val) => {
             if (!val) return;
-            setTimeout(() => (dialog.value = false), 15000);
+            setTimeout(() => (dialog.value = false), 2000);
         });
 
         return {
             device,
             dialog,
-            doPublishMessage
+            doPublishRestartMessage
         }
     }
 }
